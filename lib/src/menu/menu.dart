@@ -135,7 +135,7 @@ class MenuState extends State<Menu> {
   }
 
   void dismiss() {
-    itemEntry.remove();
+    if(itemEntry != null) itemEntry.remove();
     itemEntry = null;
   }
 }
