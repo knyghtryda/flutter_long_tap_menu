@@ -1,8 +1,8 @@
-enum ClickType {
-  click,
-  rightClick,
+enum TapType {
+  tap,
+  secondaryTap,
   longPress,
-  doubleClick,
+  doubleTap,
   none,
 }
 

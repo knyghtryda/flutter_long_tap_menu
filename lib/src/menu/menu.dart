@@ -24,7 +24,7 @@ class Menu extends StatefulWidget {
   final Offset offset;
   final MenuDecoration decoration;
   final ItemBuilder itemBuilder;
-  final ClickType clickType;
+  final TapType tapType;
   final DividerBuilder dividerBuilder;
 
   const Menu({
@@ -36,7 +36,7 @@ class Menu extends StatefulWidget {
     this.offset = Offset.zero,
     this.decoration = const MenuDecoration(),
     this.itemBuilder = defaultItemBuilder,
-    this.clickType = ClickType.longPress,
+    this.tapType = TapType.tap,
     this.dividerBuilder = buildDivider,
   }) : super(key: key);
 
@@ -52,7 +52,22 @@ class Menu extends StatefulWidget {
 }
 
 class MenuState extends State<Menu> {
-  GlobalKey key = GlobalKey();
+  final GlobalKey key = GlobalKey();
+  OverlayEntry itemEntry;
+  bool showMenu = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      key: key,
+      onTap: widget.tapType == TapType.tap ? buildMenu : null,
+      onDoubleTap: widget.tapType == TapType.doubleTap ? buildMenu : null,
+      onSecondaryTap: widget.tapType == TapType.secondaryTap ? buildMenu : null,
+      onLongPress: widget.tapType == TapType.longPress ? buildMenu : null,
+      behavior: HitTestBehavior.translucent,
+      child: widget.child,
+    );
+  }
 
   MenuAlignment childAlignmentOnMenu(MenuAlignment alignment) {
     switch (alignment) {
@@ -88,78 +103,33 @@ class MenuState extends State<Menu> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    switch (widget.clickType) {
-      case ClickType.longPress:
-        return GestureDetector(
-          key: key,
-          onLongPress: () => defaultShowItem(),
-          behavior: HitTestBehavior.opaque,
-          child: widget.child,
-        );
-        break;
-      case ClickType.click:
-        return GestureDetector(
-          key: key,
-          onTap: () => defaultShowItem(),
-          behavior: HitTestBehavior.translucent,
-          child: widget.child,
-        );
-      case ClickType.rightClick:
-        return GestureDetector(
-          key: key,
-          onSecondaryTap: () => defaultShowItem(),
-          behavior: HitTestBehavior.opaque,
-          child: widget.child,
-        );
-      case ClickType.doubleClick:
-        return GestureDetector(
-          key: key,
-          onDoubleTap: () => defaultShowItem(),
-          behavior: HitTestBehavior.opaque,
-          child: widget.child,
-        );
-      default:
-        return widget.child;
-    }
-  }
-
-  void defaultShowItem() {
-    var rect =
+  void buildMenu() {
+    final rect =
         UIHelper.findGlobalRect(key, childAlignBy: widget.menuAlignmentOnChild);
-    showItem(rect);
-  }
-
-  OverlayEntry itemEntry;
-  bool showMenu = false;
-
-  void showItem(Rect rect) {
-    var items = widget.items;
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     final _childAlignmentOnMenu = (widget.position == MenuPosition.inside
         ? widget.menuAlignmentOnChild
         : childAlignmentOnMenu(widget.menuAlignmentOnChild));
-    Widget menuWidget = _MenuWidget(
-      offsetRect: rect,
-      size: size,
-      items: items,
-      menuOffset: widget.offset,
-      alignment: _childAlignmentOnMenu,
-      decoration: widget.decoration,
-      dismissBackground: dismissBackground,
-      dividerBuilder: widget.dividerBuilder,
-      itemBuilder: widget.itemBuilder,
-    );
 
     itemEntry = OverlayEntry(
-        builder: (BuildContext context) => GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                dismissBackground();
-              },
-              child: menuWidget,
-            ));
+      builder: (BuildContext context) => GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTapDown: (details) {
+          dismissBackground();
+        },
+        child: _MenuWidget(
+          offsetRect: rect,
+          size: size,
+          items: widget.items,
+          menuOffset: widget.offset,
+          alignment: _childAlignmentOnMenu,
+          decoration: widget.decoration,
+          dismissBackground: dismissBackground,
+          dividerBuilder: widget.dividerBuilder,
+          itemBuilder: widget.itemBuilder,
+        ),
+      ),
+    );
 
     Overlay.of(context).insert(itemEntry);
   }
@@ -201,7 +171,7 @@ class _MenuWidget extends StatefulWidget {
 class _MenuWidgetState extends State<_MenuWidget>
     with AfterLayoutMixin<_MenuWidget> {
   Offset _offset = Offset.zero;
-  GlobalKey menuKey = GlobalKey();
+  final GlobalKey menuKey = GlobalKey();
   bool showMenu = false;
 
   @override

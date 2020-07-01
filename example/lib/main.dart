@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       child: MaterialButton(
                         child: Text('Show Menu TL'),
                       ),
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       menuAlignmentOnChild: MenuAlignment.topLeft,
                     ),
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       offset: Offset(0, 10),
                       child: MaterialButton(
                         child: Text('Show Menu T'),
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       menuAlignmentOnChild: MenuAlignment.topCenter,
                     ),
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       child: MaterialButton(
                         child: Text('Show Menu TR'),
                       ),
@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       child: MaterialButton(
                         child: Text('Show Menu CL'),
                       ),
@@ -134,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       menuAlignmentOnChild: MenuAlignment.centerLeft,
                     ),
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       child: MaterialButton(
                         child: Text('Show Menu C'),
                       ),
@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       menuAlignmentOnChild: MenuAlignment.center,
                     ),
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       child: MaterialButton(
                         child: Text('Show Menu CR'),
                       ),
@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       child: MaterialButton(
                         child: Text('Show Menu BL'),
                       ),
@@ -163,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       menuAlignmentOnChild: MenuAlignment.bottomLeft,
                     ),
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       child: MaterialButton(
                         child: Text('Show Menu BC'),
                       ),
@@ -171,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       menuAlignmentOnChild: MenuAlignment.bottomCenter,
                     ),
                     Menu(
-                      clickType: ClickType.click,
+                      tapType: TapType.tap,
                       child: MaterialButton(
                         child: Text('Show Menu BR'),
                       ),
