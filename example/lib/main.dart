@@ -96,25 +96,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Menu(
+                      clickType: ClickType.click,
                       child: MaterialButton(
                         child: Text('Show Menu TL'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.topLeft,
                     ),
                     Menu(
+                      clickType: ClickType.click,
+                      offset: Offset(0, 10),
                       child: MaterialButton(
                         child: Text('Show Menu T'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.topCenter,
                     ),
                     Menu(
+                      clickType: ClickType.click,
                       child: MaterialButton(
                         child: Text('Show Menu TR'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.topRight,
@@ -125,25 +126,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Menu(
+                      clickType: ClickType.click,
                       child: MaterialButton(
                         child: Text('Show Menu CL'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.centerLeft,
                     ),
                     Menu(
+                      clickType: ClickType.click,
                       child: MaterialButton(
                         child: Text('Show Menu C'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.center,
                     ),
                     Menu(
+                      clickType: ClickType.click,
                       child: MaterialButton(
                         child: Text('Show Menu CR'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.centerRight,
@@ -154,25 +155,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Menu(
+                      clickType: ClickType.click,
                       child: MaterialButton(
                         child: Text('Show Menu BL'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.bottomLeft,
                     ),
                     Menu(
+                      clickType: ClickType.click,
                       child: MaterialButton(
                         child: Text('Show Menu BC'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.bottomCenter,
                     ),
                     Menu(
+                      clickType: ClickType.click,
                       child: MaterialButton(
                         child: Text('Show Menu BR'),
-                        onPressed: () {},
                       ),
                       items: menuItems,
                       menuAlignmentOnChild: MenuAlignment.bottomRight,
@@ -180,13 +181,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 )
               ],
-            ),
-            Menu(
-              child: MaterialButton(
-                child: Text('Show Menu'),
-                onPressed: () {},
-              ),
-              items: menuItems,
             ),
           ],
         ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../menu/menu.dart';
+import '../menu/enums.dart';
 
 class UIHelper {
   UIHelper._();

@@ -1,7 +1,8 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:menu/src/helper/ui_helper.dart';
-import 'package:menu/src/menu/tap_type.dart';
+
+import 'enums.dart';
 
 part './decoration.dart';
 
@@ -15,24 +16,12 @@ typedef Widget ItemBuilder(
 
 typedef Widget DividerBuilder(BuildContext context, int lastIndex);
 
-enum MenuAlignment {
-  topLeft,
-  topCenter,
-  topRight,
-  centerLeft,
-  center,
-  centerRight,
-  bottomLeft,
-  bottomCenter,
-  bottomRight
-}
-
 class Menu extends StatefulWidget {
   final Widget child;
   final List<MenuItem> items;
   final MenuAlignment menuAlignmentOnChild;
-  final double menuSpace;
-  final double menuShift;
+  final MenuPosition position;
+  final Offset offset;
   final MenuDecoration decoration;
   final ItemBuilder itemBuilder;
   final ClickType clickType;
@@ -40,11 +29,11 @@ class Menu extends StatefulWidget {
 
   const Menu({
     Key key,
-    this.items,
     this.child,
-    this.menuSpace = 5.0,
-    this.menuShift = 0,
+    this.items,
     this.menuAlignmentOnChild = MenuAlignment.topCenter,
+    this.position = MenuPosition.outside,
+    this.offset = Offset.zero,
     this.decoration = const MenuDecoration(),
     this.itemBuilder = defaultItemBuilder,
     this.clickType = ClickType.longPress,
@@ -114,6 +103,13 @@ class MenuState extends State<Menu> {
         return GestureDetector(
           key: key,
           onTap: () => defaultShowItem(),
+          behavior: HitTestBehavior.translucent,
+          child: widget.child,
+        );
+      case ClickType.rightClick:
+        return GestureDetector(
+          key: key,
+          onSecondaryTap: () => defaultShowItem(),
           behavior: HitTestBehavior.opaque,
           child: widget.child,
         );
@@ -141,12 +137,14 @@ class MenuState extends State<Menu> {
   void showItem(Rect rect) {
     var items = widget.items;
     var size = MediaQuery.of(context).size;
-    final _childAlignmentOnMenu =
-        childAlignmentOnMenu(widget.menuAlignmentOnChild);
+    final _childAlignmentOnMenu = (widget.position == MenuPosition.inside
+        ? widget.menuAlignmentOnChild
+        : childAlignmentOnMenu(widget.menuAlignmentOnChild));
     Widget menuWidget = _MenuWidget(
       offsetRect: rect,
       size: size,
       items: items,
+      menuOffset: widget.offset,
       alignment: _childAlignmentOnMenu,
       decoration: widget.decoration,
       dismissBackground: dismissBackground,
@@ -175,6 +173,7 @@ class MenuState extends State<Menu> {
 class _MenuWidget extends StatefulWidget {
   final Size size;
   final Rect offsetRect;
+  final Offset menuOffset;
   final MenuAlignment alignment;
   final List<MenuItem> items;
   final MenuDecoration decoration;
@@ -182,17 +181,18 @@ class _MenuWidget extends StatefulWidget {
   final DividerBuilder dividerBuilder;
   final Function dismissBackground;
 
-  const _MenuWidget(
-      {Key key,
-      this.size,
-      this.offsetRect,
-      this.items,
-      this.decoration,
-      this.itemBuilder,
-      this.dividerBuilder,
-      this.dismissBackground,
-      this.alignment})
-      : super(key: key);
+  const _MenuWidget({
+    Key key,
+    this.size,
+    this.offsetRect,
+    this.items,
+    this.decoration,
+    this.itemBuilder,
+    this.dividerBuilder,
+    this.dismissBackground,
+    this.alignment,
+    this.menuOffset,
+  }) : super(key: key);
 
   @override
   _MenuWidgetState createState() => _MenuWidgetState();
@@ -200,13 +200,14 @@ class _MenuWidget extends StatefulWidget {
 
 class _MenuWidgetState extends State<_MenuWidget>
     with AfterLayoutMixin<_MenuWidget> {
-  Offset offset = Offset.zero;
+  Offset _offset = Offset.zero;
   GlobalKey menuKey = GlobalKey();
   bool showMenu = false;
 
   @override
   void initState() {
-    offset = Offset(widget.offsetRect.left, widget.offsetRect.top);
+    _offset = Offset(widget.offsetRect.left, widget.offsetRect.top) -
+        widget.menuOffset;
     super.initState();
   }
 
@@ -214,7 +215,6 @@ class _MenuWidgetState extends State<_MenuWidget>
   void afterFirstLayout(BuildContext context) {
     RenderBox renderObject = menuKey.currentContext?.findRenderObject();
     Size _size = renderObject.size;
-    print(_size);
     var newOffset;
     switch (widget.alignment) {
       case MenuAlignment.topLeft:
@@ -248,19 +248,17 @@ class _MenuWidgetState extends State<_MenuWidget>
         newOffset = Offset.zero;
     }
     setState(() {
-      offset -= newOffset;
+      _offset -= newOffset;
       showMenu = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.offsetRect);
-    print(offset);
     return Opacity(
       opacity: showMenu ? 1.0 : 0,
       child: Padding(
-        padding: EdgeInsets.only(left: offset.dx, top: offset.dy),
+        padding: EdgeInsets.only(left: _offset.dx, top: _offset.dy),
         child: FittedBox(
           fit: BoxFit.none,
           alignment: Alignment.topLeft,
