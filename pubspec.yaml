@@ -1,6 +1,5 @@
-name: menu
-description: menu with flutter,
-  just wrap your widget ,and long tap to show menu
+name: Floating Flutter Menus
+description: A multi-purpose floating menu for Flutter.  
 version: 0.1.5
 
 author: Yan Min Hong

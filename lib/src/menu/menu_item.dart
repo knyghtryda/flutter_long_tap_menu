@@ -3,17 +3,19 @@ part of 'menu.dart';
 class MenuItem {
   final Widget child;
   final Color backgroundColor;
-  final Color splashColor;
+  final Color _splashColor;
   final EdgeInsets padding;
   final Function onTap;
+  final Function onLongPress;
 
   MenuItem({
     this.onTap,
+    this.onLongPress,
     this.child,
     this.backgroundColor = Colors.grey,
     Color splashColor,
     this.padding = const EdgeInsets.all(10),
-  }) : this.splashColor = splashColor ?? Colors.grey[100];
+  }) : _splashColor = splashColor ?? Colors.grey[100];
 }
 
 class _MenuItem extends StatefulWidget {
@@ -35,7 +37,7 @@ class __MenuItemState extends State<_MenuItem> {
     return Material(
       color: widget.menuItem.backgroundColor,
       child: InkWell(
-        splashColor: widget.menuItem.splashColor,
+        splashColor: widget.menuItem._splashColor,
         child: Container(
           padding: widget.menuItem.padding,
           alignment: Alignment.center,

@@ -12,12 +12,13 @@ List<T> addDividers<T>(List<T> items, T divider) {
 
 class MenuBar {
   final List<MenuItem> menuItems;
-  final double height;
+  ///The thickness of the MenuBar.  
+  final double thickness;
   final BoxDecoration decoration;
-  final Widget divider;
+  final Widget _divider;
 
-  MenuBar({this.menuItems, this.height = 36, this.decoration, Widget divider})
-      : this.divider = divider ??
+  MenuBar({this.menuItems, this.thickness = 36, this.decoration, Widget divider})
+      : _divider = divider ??
             Container(
               width: 0.5,
               color: Colors.black,
@@ -50,7 +51,7 @@ class _MenuBarState extends State<_MenuBar> {
     return ClipRRect(
       child: Container(
         decoration: widget.menuBar.decoration,
-        height: widget.menuBar.height,
+        height: widget.menuBar.thickness,
         alignment: Alignment.topLeft,
         width: MediaQuery.of(context).size.width,
         child: ListView(
@@ -58,7 +59,7 @@ class _MenuBarState extends State<_MenuBar> {
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
           scrollDirection: Axis.horizontal,
-          children: addDividers<Widget>(widgetItems, widget.menuBar.divider),
+          children: addDividers<Widget>(widgetItems, widget.menuBar._divider),
         ),
       ),
     );

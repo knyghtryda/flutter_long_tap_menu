@@ -1,6 +1,5 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:menu/src/helper/ui_helper.dart';
 
 import 'enums.dart';
 
@@ -29,10 +28,10 @@ class Menu extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  MenuState createState() => MenuState();
+  _MenuState createState() => _MenuState();
 }
 
-class MenuState extends State<Menu> {
+class _MenuState extends State<Menu> {
   final GlobalKey key = GlobalKey();
   OverlayEntry itemEntry;
   bool showMenu = false;
@@ -100,15 +99,66 @@ class MenuState extends State<Menu> {
     }
   }
 
+  Rect findGlobalRect(GlobalKey key, {childAlignBy = MenuAlignment.topLeft}) {
+    RenderBox renderObject = key.currentContext?.findRenderObject();
+    if (renderObject == null) {
+      return null;
+    }
+
+    var globalOffset = renderObject?.localToGlobal(Offset.zero);
+
+    if (globalOffset == null) {
+      return null;
+    }
+
+    var bounds = renderObject.paintBounds;
+    Offset alignmentOffset;
+
+    switch (childAlignBy) {
+      case MenuAlignment.topLeft:
+        alignmentOffset = bounds.topLeft;
+        break;
+      case MenuAlignment.topCenter:
+        alignmentOffset = bounds.topCenter;
+        break;
+      case MenuAlignment.topRight:
+        alignmentOffset = bounds.topRight;
+        break;
+      case MenuAlignment.centerLeft:
+        alignmentOffset = bounds.centerLeft;
+        break;
+      case MenuAlignment.center:
+        alignmentOffset = bounds.center;
+        break;
+      case MenuAlignment.centerRight:
+        alignmentOffset = bounds.centerRight;
+        break;
+      case MenuAlignment.bottomLeft:
+        alignmentOffset = bounds.bottomLeft;
+        break;
+      case MenuAlignment.bottomCenter:
+        alignmentOffset = bounds.bottomCenter;
+        break;
+      case MenuAlignment.bottomRight:
+        alignmentOffset = bounds.bottomRight;
+        break;
+      default:
+        alignmentOffset = Offset.zero;
+    }
+
+    var finalOffset = globalOffset + alignmentOffset;
+    bounds = bounds.translate(finalOffset.dx, finalOffset.dy);
+    return bounds;
+  }
+
   void buildMenu({Offset tapOffset}) {
-    final size = MediaQuery.of(context).size;
     MenuAlignment _childAlignmentOnMenu;
     Offset globalOffset;
     if (tapOffset != null) {
       globalOffset = tapOffset;
       _childAlignmentOnMenu = MenuAlignment.center;
     } else {
-      final rect = UIHelper.findGlobalRect(key,
+      final rect = findGlobalRect(key,
           childAlignBy: widget.menuAlignmentOnChild);
       globalOffset = Offset(rect.left, rect.top);
       _childAlignmentOnMenu = (widget.position == MenuPosition.inside
@@ -121,7 +171,7 @@ class MenuState extends State<Menu> {
         onTapDown: (details) {
           dismiss();
         },
-        child: _Menu(
+        child: _MenuWidget(
           menuBar: widget.menuBar ?? MenuBar(),
           globalOffset: globalOffset,
           menuOffset: widget.offset,
@@ -135,19 +185,19 @@ class MenuState extends State<Menu> {
   }
 
   void dismiss() {
-    if(itemEntry != null) itemEntry.remove();
+    if (itemEntry != null) itemEntry.remove();
     itemEntry = null;
   }
 }
 
-class _Menu extends StatefulWidget {
+class _MenuWidget extends StatefulWidget {
   final Offset globalOffset;
   final Offset menuOffset;
   final MenuBar menuBar;
   final MenuAlignment alignment;
   final Function dismiss;
 
-  const _Menu({
+  const _MenuWidget({
     Key key,
     this.globalOffset,
     this.dismiss,
@@ -160,7 +210,7 @@ class _Menu extends StatefulWidget {
   _MenuWidgetState createState() => _MenuWidgetState();
 }
 
-class _MenuWidgetState extends State<_Menu> with AfterLayoutMixin<_Menu> {
+class _MenuWidgetState extends State<_MenuWidget> with AfterLayoutMixin<_MenuWidget> {
   Offset _offset = Offset.zero;
   final GlobalKey menuKey = GlobalKey();
   bool showMenu = false;
