@@ -39,15 +39,17 @@ I want my menu outside of the box *MAN!*  And without knowing the sizes of the b
 
 It... cheats.  
 
-FAM still doesn't know about the properties of the menu before hand, BUT what it can do is render the menu invisibly as an overlay, examine its size, then move it to where it needs to be.  
+FAM still doesn't know about the properties of the menu before hand, BUT what it can do is render the menu invisibly as an overlay, examine its size, then move it to where it needs to be.  The result is that I can now define an absolute relationship between relevant points on a widget (say, tying the `bottomCenter` of one widget to the `topCenter` of another) without either widget having any relationship, and without any restrictions on how I draw either widget, while making sure that whatever crazy alignments I do won't mess up the positioning or size of my original widget.  
 
-With `EdgeInsets` padding... 
+And this is a being done with overlays 😃 and...
+
+`EdgeInsets` padding 😑 
 
 **UGH.**  
 
 **THE BOX STILL WINS!!!**
 
-It ain't pretty, but the results do speak for themselves.  Hope at least some of you can make use of this, and maybe Flutter will one day have relational positioning like any sensible rendering language.
+OK.  It ain't pretty, but the results do speak for themselves.  Hope at least some of you can make use of this, and maybe Flutter will one day have relational positioning like any sensible rendering language.
 
 ## Credits
 This was originally a fork of https://github.com/CaiJingLong/flutter_long_tap_menu that outgrew most of the original code.  
