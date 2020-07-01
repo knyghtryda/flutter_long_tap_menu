@@ -68,35 +68,128 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    final menuItems = [
+      MenuItem("one", () {}),
+      MenuItem("add", _incrementCounter),
+      MenuItem("three", () {}),
+      MenuItem("four", () {}),
+      MenuItem("five", () {}),
+      MenuItem("six", () {}),
+    ];
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Column(
-        children: <Widget>[
-          Text(
-            _counter.toString(),
-          ),
-          Menu(
-            child: Container(
-              width: 200,
-              color: Colors.yellow,
-              height: 100,
-              child: Text("long press show menu"),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              _counter.toString(),
             ),
-            items: [
-              MenuItem("copy", () {}),
-              MenuItem("add", _incrementCounter),
-              MenuItem("copy", () {}),
-            ],
-            decoration: MenuDecoration(
-              // constraints: BoxConstraints(),
-              padding: const EdgeInsets.all(10),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu TL'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.topLeft,
+                    ),
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu T'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.topCenter,
+                    ),
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu TR'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.topRight,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu CL'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.centerLeft,
+                    ),
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu C'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.center,
+                    ),
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu CR'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.centerRight,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu BL'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.bottomLeft,
+                    ),
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu BC'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.bottomCenter,
+                    ),
+                    Menu(
+                      child: MaterialButton(
+                        child: Text('Show Menu BR'),
+                        onPressed: () {},
+                      ),
+                      items: menuItems,
+                      menuAlignmentOnChild: MenuAlignment.bottomRight,
+                    ),
+                  ],
+                )
+              ],
             ),
-          ),
-        ],
+            Menu(
+              child: MaterialButton(
+                child: Text('Show Menu'),
+                onPressed: () {},
+              ),
+              items: menuItems,
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,

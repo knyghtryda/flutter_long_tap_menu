@@ -1,15 +1,16 @@
 name: menu
 description: menu with flutter,
   just wrap your widget ,and long tap to show menu
-version: 0.1.4
+version: 0.1.5
 
-author: Caijinglong<cjl_spy@163.com>
-homepage: https://github.com/CaiJingLong/flutter_long_tap_menu
+author: Yan Min Hong
+homepage: https://github.com/knyghtryda/flutter_long_tap_menu
 
 environment:
   sdk: '>=2.2.2 <3.0.0'
 
 dependencies:
+  after_layout: ^1.0.7+2
   flutter:
     sdk: flutter
 
