@@ -4,51 +4,32 @@ import 'package:menu/src/helper/ui_helper.dart';
 
 import 'enums.dart';
 
-part './decoration.dart';
-
-typedef Widget ItemBuilder(
-  MenuItem item,
-  MenuDecoration menuDecoration,
-  VoidCallback dismiss, {
-  bool isFirst,
-  bool isLast,
-});
-
-typedef Widget DividerBuilder(BuildContext context, int lastIndex);
+part 'decoration.dart';
+part 'menu_item.dart';
+part 'menu_bar.dart';
 
 class Menu extends StatefulWidget {
   final Widget child;
-  final List<MenuItem> items;
+  final MenuBar menuBar;
+  final bool menuOverTap;
   final MenuAlignment menuAlignmentOnChild;
   final MenuPosition position;
   final Offset offset;
-  final MenuDecoration decoration;
-  final ItemBuilder itemBuilder;
   final TapType tapType;
-  final DividerBuilder dividerBuilder;
 
-  const Menu({
+  Menu({
     Key key,
     this.child,
-    this.items,
+    this.menuBar,
+    this.menuOverTap = false,
     this.menuAlignmentOnChild = MenuAlignment.topCenter,
     this.position = MenuPosition.outside,
     this.offset = Offset.zero,
-    this.decoration = const MenuDecoration(),
-    this.itemBuilder = defaultItemBuilder,
     this.tapType = TapType.tap,
-    this.dividerBuilder = buildDivider,
   }) : super(key: key);
 
   @override
   MenuState createState() => MenuState();
-
-  static Widget buildDivider(BuildContext context, int lastIndex) {
-    return Container(
-      width: 0.5,
-      color: Colors.white,
-    );
-  }
 }
 
 class MenuState extends State<Menu> {
@@ -60,10 +41,26 @@ class MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     return GestureDetector(
       key: key,
-      onTap: widget.tapType == TapType.tap ? buildMenu : null,
+      onTap: widget.tapType == TapType.tap && !widget.menuOverTap
+          ? buildMenu
+          : null,
       onDoubleTap: widget.tapType == TapType.doubleTap ? buildMenu : null,
-      onSecondaryTap: widget.tapType == TapType.secondaryTap ? buildMenu : null,
+      onSecondaryTap:
+          widget.tapType == TapType.secondaryTap && !widget.menuOverTap
+              ? buildMenu
+              : null,
       onLongPress: widget.tapType == TapType.longPress ? buildMenu : null,
+      onTapUp: widget.tapType == TapType.tap && widget.menuOverTap
+          ? (details) {
+              buildMenu(tapOffset: details.globalPosition);
+            }
+          : null,
+      onSecondaryTapUp:
+          widget.tapType == TapType.secondaryTap && widget.menuOverTap
+              ? (details) {
+                  buildMenu(tapOffset: details.globalPosition);
+                }
+              : null,
       behavior: HitTestBehavior.translucent,
       child: widget.child,
     );
@@ -103,30 +100,33 @@ class MenuState extends State<Menu> {
     }
   }
 
-  void buildMenu() {
-    final rect =
-        UIHelper.findGlobalRect(key, childAlignBy: widget.menuAlignmentOnChild);
+  void buildMenu({Offset tapOffset}) {
     final size = MediaQuery.of(context).size;
-    final _childAlignmentOnMenu = (widget.position == MenuPosition.inside
-        ? widget.menuAlignmentOnChild
-        : childAlignmentOnMenu(widget.menuAlignmentOnChild));
-
+    MenuAlignment _childAlignmentOnMenu;
+    Offset globalOffset;
+    if (tapOffset != null) {
+      globalOffset = tapOffset;
+      _childAlignmentOnMenu = MenuAlignment.center;
+    } else {
+      final rect = UIHelper.findGlobalRect(key,
+          childAlignBy: widget.menuAlignmentOnChild);
+      globalOffset = Offset(rect.left, rect.top);
+      _childAlignmentOnMenu = (widget.position == MenuPosition.inside
+          ? widget.menuAlignmentOnChild
+          : childAlignmentOnMenu(widget.menuAlignmentOnChild));
+    }
     itemEntry = OverlayEntry(
       builder: (BuildContext context) => GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTapDown: (details) {
-          dismissBackground();
+          dismiss();
         },
-        child: _MenuWidget(
-          offsetRect: rect,
-          size: size,
-          items: widget.items,
+        child: _Menu(
+          menuBar: widget.menuBar ?? MenuBar(),
+          globalOffset: globalOffset,
           menuOffset: widget.offset,
           alignment: _childAlignmentOnMenu,
-          decoration: widget.decoration,
-          dismissBackground: dismissBackground,
-          dividerBuilder: widget.dividerBuilder,
-          itemBuilder: widget.itemBuilder,
+          dismiss: dismiss,
         ),
       ),
     );
@@ -134,57 +134,48 @@ class MenuState extends State<Menu> {
     Overlay.of(context).insert(itemEntry);
   }
 
-  void dismissBackground() {
+  void dismiss() {
     itemEntry.remove();
     itemEntry = null;
   }
 }
 
-class _MenuWidget extends StatefulWidget {
-  final Size size;
-  final Rect offsetRect;
+class _Menu extends StatefulWidget {
+  final Offset globalOffset;
   final Offset menuOffset;
+  final MenuBar menuBar;
   final MenuAlignment alignment;
-  final List<MenuItem> items;
-  final MenuDecoration decoration;
-  final ItemBuilder itemBuilder;
-  final DividerBuilder dividerBuilder;
-  final Function dismissBackground;
+  final Function dismiss;
 
-  const _MenuWidget({
+  const _Menu({
     Key key,
-    this.size,
-    this.offsetRect,
-    this.items,
-    this.decoration,
-    this.itemBuilder,
-    this.dividerBuilder,
-    this.dismissBackground,
+    this.globalOffset,
+    this.dismiss,
     this.alignment,
     this.menuOffset,
+    this.menuBar,
   }) : super(key: key);
 
   @override
   _MenuWidgetState createState() => _MenuWidgetState();
 }
 
-class _MenuWidgetState extends State<_MenuWidget>
-    with AfterLayoutMixin<_MenuWidget> {
+class _MenuWidgetState extends State<_Menu> with AfterLayoutMixin<_Menu> {
   Offset _offset = Offset.zero;
   final GlobalKey menuKey = GlobalKey();
   bool showMenu = false;
+  Size _size = Size(0, 0);
 
   @override
   void initState() {
-    _offset = Offset(widget.offsetRect.left, widget.offsetRect.top) -
-        widget.menuOffset;
+    _offset = widget.globalOffset - widget.menuOffset;
     super.initState();
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
     RenderBox renderObject = menuKey.currentContext?.findRenderObject();
-    Size _size = renderObject.size;
+    _size = renderObject.size;
     var newOffset;
     switch (widget.alignment) {
       case MenuAlignment.topLeft:
@@ -225,98 +216,23 @@ class _MenuWidgetState extends State<_MenuWidget>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Opacity(
       opacity: showMenu ? 1.0 : 0,
       child: Padding(
-        padding: EdgeInsets.only(left: _offset.dx, top: _offset.dy),
+        padding: EdgeInsets.only(
+            left: _offset.dx.clamp(0, size.width - _size.width).toDouble(),
+            top: _offset.dy.clamp(0, size.height - _size.height).toDouble()),
         child: FittedBox(
           fit: BoxFit.none,
           alignment: Alignment.topLeft,
-          child: Container(
-            height: 36,
-            alignment: Alignment.topLeft,
-            // color: Colors.green,
-            width: MediaQuery.of(context).size.width,
-            child: ListView(
-              key: menuKey,
-              scrollDirection: Axis.horizontal,
-              children: widget.items.map((item) {
-                var index = widget.items.indexOf(item);
-                var itemWidget = widget.itemBuilder(
-                  item,
-                  widget.decoration,
-                  widget.dismissBackground,
-                  isFirst: index == 0,
-                  isLast: index == widget.items.length - 1,
-                );
-                return Row(
-                  children: <Widget>[
-                    itemWidget,
-                    if (index != widget.items.length - 1)
-                      widget.dividerBuilder(context, index),
-                  ],
-                );
-              }).toList(),
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
-            ),
+          child: _MenuBar(
+            menuKey: menuKey,
+            menuBar: widget.menuBar,
+            dismiss: widget.dismiss,
           ),
         ),
       ),
     );
   }
-}
-
-class MenuItem {
-  final String text;
-  final Function onTap;
-
-  const MenuItem(this.text, this.onTap);
-}
-
-Widget defaultItemBuilder(
-  MenuItem item,
-  MenuDecoration menuDecoration,
-  VoidCallback dismiss, {
-  bool isFirst,
-  bool isLast,
-}) {
-  final BoxConstraints constraints =
-      menuDecoration.constraints ?? const BoxConstraints();
-
-  final EdgeInsetsGeometry itemPadding = menuDecoration.padding ??
-      const EdgeInsets.symmetric(
-        horizontal: 10.0,
-        vertical: 10.0,
-      );
-
-  var r = menuDecoration.radius;
-  var radius = BorderRadius.horizontal(
-    left: isFirst ? Radius.circular(r) : Radius.zero,
-    right: isLast ? Radius.circular(r) : Radius.zero,
-  );
-
-  return ClipRRect(
-    borderRadius: radius,
-    child: Material(
-      color: menuDecoration.color,
-      child: InkWell(
-        splashColor: menuDecoration.splashColor,
-        // color: menuDecoration.color,
-        child: Container(
-          padding: itemPadding,
-          constraints: constraints,
-          alignment: Alignment.center,
-          child: Text(
-            item.text,
-            style: menuDecoration.textStyle,
-          ),
-        ),
-        onTap: () {
-          item.onTap();
-          dismiss();
-        },
-      ),
-    ),
-  );
 }

@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Floating Menus',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Floating Menus Demo'),
     );
   }
 }
@@ -69,13 +69,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     final menuItems = [
-      MenuItem("one", () {}),
-      MenuItem("add", _incrementCounter),
-      MenuItem("three", () {}),
-      MenuItem("four", () {}),
-      MenuItem("five", () {}),
-      MenuItem("six", () {}),
+      MenuItem(child: Text('one')),
+      MenuItem(child: Text('two')),
+      MenuItem(child: Text('three')),
     ];
+
+    final menuBar = MenuBar(menuItems: menuItems);
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -89,6 +88,12 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               _counter.toString(),
             ),
+            Menu(
+              child: MaterialButton(
+                child: Text('Show Basic Menu'),
+              ),
+              menuBar: MenuBar(),
+            ),
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -100,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu TL'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.topLeft,
                     ),
                     Menu(
@@ -109,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu T'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.topCenter,
                     ),
                     Menu(
@@ -117,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu TR'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.topRight,
                     ),
                   ],
@@ -130,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu CL'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.centerLeft,
                     ),
                     Menu(
@@ -138,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu C'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.center,
                     ),
                     Menu(
@@ -146,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu CR'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.centerRight,
                     ),
                   ],
@@ -159,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu BL'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.bottomLeft,
                     ),
                     Menu(
@@ -167,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu BC'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.bottomCenter,
                     ),
                     Menu(
@@ -175,11 +180,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: MaterialButton(
                         child: Text('Show Menu BR'),
                       ),
-                      items: menuItems,
+                      menuBar: menuBar,
                       menuAlignmentOnChild: MenuAlignment.bottomRight,
                     ),
                   ],
-                )
+                ),
+                Menu(
+                  tapType: TapType.tap,
+                  child: Container(
+                    width: 300,
+                    height: 300,
+                    color: Colors.yellow,
+                    child: Center(child: Text('Show Menu Over Tap')),
+                  ),
+                  menuOverTap: true,
+                  menuBar: menuBar,
+                  menuAlignmentOnChild: MenuAlignment.bottomRight,
+                ),
               ],
             ),
           ],
