@@ -1,76 +1,30 @@
-# menu
-
-[![pub package](https://img.shields.io/pub/v/menu.svg)](https://pub.dartlang.org/packages/menu)
-![GitHub](https://img.shields.io/github/license/caijinglong/flutter_long_tap_menu.svg)
-
-menu with flutter
-
-just wrap your widget ,and long tap to show menu
-
-like this:
-
-![Screenshot_2019-05-23-10-58-43-361_com.example.ex.png](https://raw.githubusercontent.com/kikt-blog/image/master/img/Screenshot_2019-05-23-10-58-43-361_com.example.ex.png)
+# Flutter Anywhere Menus (FAM)
+Menus, anywhere you want them!
 
 ## Usage
 
+Defaults
 ```dart
-import 'package:menu/menu.dart';
+import 'package:fam/menu.dart';
 
 Menu(
   child: Container(
     width: 200,
     color: Colors.yellow,
     height: 100,
-    child: Text("long press show menu"),
+    child: Text("Press me"),
   ),
-  items: [
-    MenuItem("copy", () {}),
-    MenuItem("add", _incrementCounter),
-  ],
-  decoration: MenuDecoration(
-    itemConstraints: BoxConstraints(),
-  ),
+  menuBar: MenuBar()
 );
 ```
 
-## params
+## Background
+Why FAM?  The short answer is... [yak shaving][1].  I needed a menu for a project that would pop up above a widget when I clicked on it.  Simple right?  Yeah... no.  There were a few more requirements that made it a far more interesting problem.
+1.  The menu needs to be very customizable
+2.  The menu needs the ability to have sub-menus OR sub-widgets
+3.  The menu (and all sub-menus and sub-widgets) needs to be a drawn above all other widgets
+4.  And this was the doozy... the menu needs to be positionable RELATIVE to its parent widget, and all sub-menus and sub-widgets need to be relative positioned to their parent
 
-### Menu
+That last requirement took me down the rabbit hole of Flutter widget positioning and long story short, Flutter is one of a few (maybe the only?) rendering languages I've used that simply cannot do relative positioning out of the box (pun intended).  See the box is what traps you.  You can `Column()` and `Row()` all day long but you're still trapped in box.  `Stack()` and `Align()`?  HA!  Still stuck in that box.  I want my menu outside of the box MAN!  And without knowing the sizes of the boxes before rendering, good luck trying to accurately position a menu over (or under, or next to) its intended target widget.  So what does FAM do?  It... cheats.  FAM still can't know about the properties of the menu before hand, BUT what it can do is render the menu invisibly, examine its size, then move it to where it needs to be as an overlay.  With `EdgeInsets` padding... UGH.  It ain't pretty, but the results do speak for themselves.  Hope at least some of you can make use of this, and maybe Flutter will one day have relational positioning like any sane rendering language.
 
-| Name           | Type           | Required | Describe                     |
-| -------------- | -------------- | -------- | ---------------------------- |
-| child          | Widget         | true     | widget                       |
-| items          | List<MenuItem> | true     | options                      |
-| decoration     | MenuDecoration | false    | decoration for menu and item |
-| itemBuilder    | ItemBuilder    | false    | customItem                   |
-| clickType      | ClickType      | false    |                              |
-| dividerBuilder | DivderBuilder  | false    | build divider builder        |
-
-`typedef Widget DividerBuilder(BuildContext context, int lastIndex);`
-
-### MenuItem
-
-| Name  | Type     | Required | Describe |
-| ----- | -------- | -------- | -------- |
-| text  | string   | true     |          |
-| onTap | Function | true     | onTap    |
-
-### MenuDecoration
-
-| Name        | Type           | Required | Describe                                      | Default                                                  |
-| ----------- | -------------- | -------- | --------------------------------------------- | -------------------------------------------------------- |
-| textStyle   | TextStyle      | false    | style of menu item                            | `TextStyle(fontSize: 14.0,color: Colors.white)`          |
-| color       | Color          | false    | color of menu item                            | `Color(0xFF111111)`                                      |
-| splashColor | Color          | false    | splashColor of menu item                      | `Color(0xFF888888)`                                      |
-| radius      | doule          | false    | radius of menu item, only first and last item | `5.0`                                                    |
-| constraints | BoxConstraints | false    | constraints of menu item                      | `BoxConstraints()`                                       |
-| padding     | TextStyle      | false    | padding of menu item'text                     | `EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0)` |
-
-### ClickType
-
-| Name        | Describe                         |
-| ----------- | -------------------------------- |
-| click       | click to show menu               |
-| longPress   | longPress widget to show menu    |
-| doubleClick | double click widget to show menu |
-| none        | Not responding to touch events   |
+[1]:https://en.wiktionary.org/wiki/yak_shaving 
