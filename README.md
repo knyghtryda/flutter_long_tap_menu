@@ -30,7 +30,7 @@ Why FAM?  The short answer is... [yak shaving][1].  I needed a menu for a projec
 3.  The menu (and all sub-menus and sub-widgets) needs to be a drawn above all other widgets
 4.  And this was the doozy... the menu needs to be positionable *RELATIVE* to its parent widget, and all sub-menus and sub-widgets need to be relative positioned to their parent
 
-That last requirement took me down the rabbit hole of Flutter widget positioning and long story short, Flutter is one of a few (maybe the only?) rendering languages I've used that simply cannot do relative positioning out of the box (pun intended).  See the box is what traps you.  You can `Column()` and `Row()` all day long but you're still trapped in box.  
+That last requirement took me down the rabbit hole of Flutter widget positioning and long story short, Flutter is one of a few (maybe the only?) rendering languages I've used that simply cannot do relative positioning out of the box (pun intended).  See, the box is what traps you.  You can `Column()` and `Row()` all day long but you're still trapped in box.  
 
 `Stack()` and `Align()`? 
 **HA!**  Still stuck in that box.  
