@@ -18,6 +18,11 @@ Menu(
 );
 ```
 
+## Roadmap
+- [ ] Vertical menus
+- [ ] Fixed screen position menus
+- [ ] Animations
+
 ## Background
 Why FAM?  The short answer is... [yak shaving][1].  I needed a menu for a project that would pop up above a widget when I clicked on it.  Simple right?  Yeah... no.  There were a few more requirements that made it a far more interesting problem.
 1.  The menu needs to be very customizable
@@ -45,6 +50,6 @@ With `EdgeInsets` padding...
 It ain't pretty, but the results do speak for themselves.  Hope at least some of you can make use of this, and maybe Flutter will one day have relational positioning like any sensible rendering language.
 
 ## Credits
-This was originally a fork of [https://github.com/CaiJingLong/flutter_long_tap_menu] that outgrew most of the original code.  
+This was originally a fork of https://github.com/CaiJingLong/flutter_long_tap_menu that outgrew most of the original code.  
 
 [1]:https://en.wiktionary.org/wiki/yak_shaving 
